@@ -1,8 +1,29 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAppContext } from "../contexts/AppContext";
+import { useMutation, useQueryClient } from "react-query";
+import * as apiClient from "../api-client";
 
 const Header = () => {
-    const { isLoggedIn } = useAppContext();
+    const queryClient = useQueryClient();
+    const navigate = useNavigate();
+
+    const { showToast, isLoggedIn } = useAppContext();
+
+    const mutation = useMutation(apiClient.signOut, {
+        onSuccess: async () => {
+            await queryClient.invalidateQueries("validateToken");
+            
+            showToast({message: "Signed out successfully!", type: "SUCCESS"});
+            navigate("/");
+        }, 
+        onError: (error: Error) => {
+            showToast({message: error.message, type: "ERROR"});
+        }
+    });
+
+    const handleSignout = () => {
+        mutation.mutate();
+    }
 
     return (
         <div className="bg-cyan-700 py-6">
@@ -13,9 +34,11 @@ const Header = () => {
                 <span className="flex space-x-2">
                     {isLoggedIn ? (
                         <>
-                            <Link to="/my-bookings">My Bookings</Link>
-                            <Link to="/my-hotels">My Hotels</Link>
-                            <button>Sign Out</button>
+                            <Link to="/my-bookings" className="flex items-center text-white px-3 font-bold hover:bg-cyan-600">My Bookings</Link>
+                            <Link to="/my-hotels" className="flex items-center text-white px-3 font-bold hover:bg-cyan-600">My Hotels</Link>
+                            <button onClick={handleSignout} className="flex bg-white items-center text-cyan-600 px-3 font-bold hover:bg-gray-100">
+                                Sign Out
+                            </button>
                         </> 
                     ) : ( 
                         <Link to="/sign-in" className="flex bg-white items-center text-cyan-600 px-3 font-bold hover:bg-gray-100">
