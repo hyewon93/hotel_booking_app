@@ -1,8 +1,10 @@
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
-import userRoutes from './routes/users';
 import "dotenv/config";
+
+import authRoutes from './routes/auth';
+import userRoutes from './routes/users';
 
 mongoose.connect(process.env.MONGODB_CONNECTION_STRING as string);
 
@@ -13,6 +15,7 @@ app.use(express.urlencoded({extended: true}));
 app.use(cors());
 
 // endpoint setup
+app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 
 app.listen(7000, () => {
