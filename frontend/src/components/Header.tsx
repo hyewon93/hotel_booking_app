@@ -26,7 +26,7 @@ const Header = () => {
     }
 
     return (
-        <div className="bg-cyan-700 py-6">
+        <div className="bg-sky-700 py-6">
             <div className="container mx-auto flex justify-between">
                 <span className="text-3xl text-white font-bold tracking-tight">
                     <Link to="/">ForYouBooking.com</Link>
@@ -34,14 +34,14 @@ const Header = () => {
                 <span className="flex space-x-2">
                     {isLoggedIn ? (
                         <>
-                            <Link to="/my-bookings" className="flex items-center text-white px-3 font-bold hover:bg-cyan-600">My Bookings</Link>
-                            <Link to="/my-hotels" className="flex items-center text-white px-3 font-bold hover:bg-cyan-600">My Hotels</Link>
-                            <button onClick={handleSignout} className="flex bg-white items-center text-cyan-600 px-3 font-bold hover:bg-gray-100">
+                            <Link to="/my-bookings" className="flex items-center text-white px-3 font-bold hover:bg-sky-600">My Bookings</Link>
+                            <Link to="/my-hotels" className="flex items-center text-white px-3 font-bold hover:bg-sky-600">My Hotels</Link>
+                            <button onClick={handleSignout} className="flex bg-white items-center text-sky-600 px-3 font-bold hover:bg-gray-100">
                                 Sign Out
                             </button>
                         </> 
                     ) : ( 
-                        <Link to="/sign-in" className="flex bg-white items-center text-cyan-600 px-3 font-bold hover:bg-gray-100">
+                        <Link to="/sign-in" className="flex bg-white items-center text-sky-600 px-3 font-bold hover:bg-gray-100">
                             Sign In
                         </Link>
                     )}
