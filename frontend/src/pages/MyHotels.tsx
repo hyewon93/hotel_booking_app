@@ -14,8 +14,8 @@ const MyHotels = () => {
     const { showToast } = useAppContext();
     
     const { data: hotelData } = useQuery("fetchMyHotels", apiClient.fetchMyHotels, {
-        onError: () => {
-
+        onError: (error: Error) => {
+            showToast({message: error.message, type: "ERROR"});
         }
     });
 
