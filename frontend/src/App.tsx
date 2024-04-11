@@ -4,6 +4,7 @@ import Layout from "./layouts/Layout";
 import Register from "./pages/Register";
 import SignIn from "./pages/SingIn";
 import AddHotel from "./pages/AddHotel";
+import MyHotels from "./pages/MyHotels";
 
 const App = () => {
 
@@ -19,6 +20,7 @@ const App = () => {
         
         {isLoggedIn && <>
           <Route path="/add-hotel" element={<Layout><AddHotel /></Layout>} />
+          <Route path="/my-hotels" element={<Layout><MyHotels /></Layout>} />
         </>}
 
         <Route path="*" element={<Navigate to="/" />} />

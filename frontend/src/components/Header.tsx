@@ -36,12 +36,12 @@ const Header = () => {
                         <>
                             <Link to="/my-bookings" className="flex items-center text-white px-3 font-bold hover:bg-sky-600">My Bookings</Link>
                             <Link to="/my-hotels" className="flex items-center text-white px-3 font-bold hover:bg-sky-600">My Hotels</Link>
-                            <button onClick={handleSignout} className="flex bg-white items-center text-sky-600 px-3 font-bold hover:bg-gray-100">
+                            <button onClick={handleSignout} className="flex bg-white items-center text-sky-600 px-3 font-bold hover:bg-gray-100 rounded">
                                 Sign Out
                             </button>
                         </> 
                     ) : ( 
-                        <Link to="/sign-in" className="flex bg-white items-center text-sky-600 px-3 font-bold hover:bg-gray-100">
+                        <Link to="/sign-in" className="flex bg-white items-center text-sky-600 px-3 font-bold hover:bg-gray-100 rounded">
                             Sign In
                         </Link>
                     )}
