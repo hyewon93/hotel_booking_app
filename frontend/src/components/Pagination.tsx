@@ -15,7 +15,7 @@ const Pagination = ({currentPage, totalPages, onPageChange}: Props) => {
         <div className="flex justify-center">
             <ul className="flex border border-slate-300">
                 {pageNumbers.map((number) => (
-                    <li className={`px-2 py-1 ${currentPage == number ? "bg-gray-200" : ""}`}>
+                    <li className={`px-2 py-1 ${currentPage == number ? "bg-gray-200" : ""}`} key={number}>
                         <button onClick={() => onPageChange(number)}>{number}</button>
                     </li>
                 ))}
