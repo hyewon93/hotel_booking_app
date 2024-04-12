@@ -53,7 +53,7 @@ export const SearchContextProvider = ({children}: {children: React.ReactNode}) =
     );
 };
 
-export const userSearchContext = () => {
+export const useSearchContext = () => {
     const context = useContext(SearchContext);
     return context as SearchContext;
 }
