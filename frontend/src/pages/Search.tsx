@@ -90,7 +90,9 @@ const Search = () => {
                 </div>
                 
                 {hotelData?.data.map((hotel) => (
-                    <SearchResultCard hotel={hotel} />
+                    <div key={hotel._id}>
+                        <SearchResultCard hotel={hotel} />
+                    </div>
                 ))}
 
                 <div>
