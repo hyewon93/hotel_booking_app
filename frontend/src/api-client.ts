@@ -220,3 +220,15 @@ export const fetchMyBookings = async (): Promise<HotelType[]> => {
 
     return response.json();
 };
+
+export const fetchPopularHotels = async (): Promise<HotelType[]> => {
+    const response = await fetch(`${API_BASE_URL}/api/hotels/popular`, {
+        credentials: "include"
+    });
+
+    if(!response.ok) {
+        throw new Error("Error fetching popular hotels");
+    }
+
+    return response.json();
+};

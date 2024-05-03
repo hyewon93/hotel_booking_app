@@ -9,6 +9,18 @@ const stripe = new Stripe(process.env.STRIPE_API_KEY as string);
 
 const router = express.Router();
 
+router.get("/popular", async (req: Request, res: Response) => {
+  try {
+    const hotels = await Hotel.find({$expr:{$gt:[{$size:{$ifNull:["$bookings", []]}}, 0]}});
+    const results = hotels.sort((a,b) => b.bookings.length - a.bookings.length).slice(0,3);
+    res.json(results);
+    
+  } catch (error) {
+    console.log("Error getting popular hotels: ", error);
+    res.status(500).json({message: "Something went wrong"});
+  }
+})
+
 router.get("/search", async (req: Request, res: Response) => {
     try {
         const query = constructSearchQuery(req.query);
