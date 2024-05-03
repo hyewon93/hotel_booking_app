@@ -83,7 +83,7 @@ router.post("/:hotelId/bookings/payment-intent", verifyToken, async (req: Reques
   const totalCost = hotel.pricePerNight * numberOfNights;
 
   const paymentIntent = await stripe.paymentIntents.create({
-    amount: totalCost,
+    amount: totalCost * 100,
     currency: "cad",
     metadata: {
       hotelId,

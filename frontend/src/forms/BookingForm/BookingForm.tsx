@@ -2,27 +2,60 @@ import { useForm } from "react-hook-form";
 import { PaymentIntentResponse, UserType } from "../../../../backend/src/shared/types";
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { StripeCardElement } from "@stripe/stripe-js";
+import { useSearchContext } from "../../contexts/SearchContext";
+import { useParams } from "react-router-dom";
+import { useMutation } from "react-query";
+import * as apiClient from "../../api-client";
+import { useAppContext } from "../../contexts/AppContext";
 
 type Props = {
     currentUser: UserType;
     paymentIntent: PaymentIntentResponse;
 };
 
-type BookingFormData = {
+export type BookingFormData = {
     firstName: string;
     lastName: string;
     email: string;
+    adultCount: number;
+    childCount: number;
+    checkIn: string;
+    checkOut: string;
+    hotelId: string;
+    totalCost: number;
+    paymentIntentId: string;
 };
 
 const BookingForm = ({ currentUser, paymentIntent }: Props) => {
     const stripe = useStripe();
     const elements = useElements();
-    6
+    
+    const search = useSearchContext();
+    const { hotelId } = useParams();
+
+    const { showToast } = useAppContext();
+
+    const { mutate: bookRoom, isLoading } = useMutation(apiClient.createRoomBooking, {
+        onSuccess: () => {
+            showToast({ message: "Booking Saved!", type: "SUCCESS" });
+        },
+        onError: () => {
+            showToast({ message: "Error saving booking", type: "ERROR" });
+        }
+    })
+
     const { handleSubmit, register } = useForm<BookingFormData>({
         defaultValues: {
             firstName: currentUser.firstName,
             lastName: currentUser.lastName,
-            email: currentUser.email
+            email: currentUser.email,
+            adultCount: search.adultCount,
+            childCount: search.childCount,
+            checkIn: search.checkIn.toISOString(),
+            checkOut: search.checkOut.toISOString(),
+            hotelId: hotelId,
+            totalCost: paymentIntent.totalCost,
+            paymentIntentId: paymentIntent.paymentIntentId,
         }
     });
 
@@ -36,10 +69,17 @@ const BookingForm = ({ currentUser, paymentIntent }: Props) => {
                 card: elements.getElement(CardElement) as StripeCardElement
             }
         });
+
+        if(result.paymentIntent?.status === "succeeded") {
+            bookRoom({ 
+                ...formData, 
+                paymentIntentId: result.paymentIntent.id 
+            });
+        }
     };
 
     return (
-        <form className="grid grid-cols-1 gap-5 rounded-lg border border-slate-300 p-5">
+        <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 gap-5 rounded-lg border border-slate-300 p-5">
             <span className="text-3xl font-bold">Confirm Your Details</span>
             <div className="grid grid-cols-2 gap-6">
                 <label className="text-gray-700 text-sm font-bold flex-1">
@@ -58,7 +98,7 @@ const BookingForm = ({ currentUser, paymentIntent }: Props) => {
             <div className="space-y-2">
                 <h2 className="text-xl font-semibold">Your Price Summary</h2>
             </div>
-            <div className="bg-blue-200 p-4 rounded-md">
+            <div className="bg-sky-200 p-4 rounded-md">
                 <div className="font-semibold text-lg">
                     Total Cost: ${paymentIntent.totalCost.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                 </div>
@@ -68,6 +108,16 @@ const BookingForm = ({ currentUser, paymentIntent }: Props) => {
                 <h3 className="text-xl font-semibold">Payment Information</h3>
                 <CardElement id="payment-element" className="border rounded-md p-2 text-sm" />
             </div>
+            <div className="flex justify-end">
+                <button 
+                    className="bg-sky-600 text-white p-2 font-hold hover:bg-sky-500 text-md rounded disabled:bg-gray-500"
+                    type="submit" 
+                    disabled={isLoading}
+                >
+                    {isLoading ? "Saving..." : "Confirm"}
+                </button>
+            </div>
+
         </form>
     );
 }
