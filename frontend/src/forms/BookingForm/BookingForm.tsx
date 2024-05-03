@@ -1,8 +1,11 @@
 import { useForm } from "react-hook-form";
-import { UserType } from "../../../../backend/src/shared/types";
+import { PaymentIntentResponse, UserType } from "../../../../backend/src/shared/types";
+import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
+import { StripeCardElement } from "@stripe/stripe-js";
 
 type Props = {
     currentUser: UserType;
+    paymentIntent: PaymentIntentResponse;
 };
 
 type BookingFormData = {
@@ -11,7 +14,10 @@ type BookingFormData = {
     email: string;
 };
 
-const BookingForm = ({ currentUser }: Props) => {
+const BookingForm = ({ currentUser, paymentIntent }: Props) => {
+    const stripe = useStripe();
+    const elements = useElements();
+    6
     const { handleSubmit, register } = useForm<BookingFormData>({
         defaultValues: {
             firstName: currentUser.firstName,
@@ -19,6 +25,18 @@ const BookingForm = ({ currentUser }: Props) => {
             email: currentUser.email
         }
     });
+
+    const onSubmit = async ( formData: BookingFormData ) => {
+        if(!stripe || !elements) {
+            return;
+        }
+
+        const result = await stripe.confirmCardPayment(paymentIntent.clientSecret, { 
+            payment_method: { 
+                card: elements.getElement(CardElement) as StripeCardElement
+            }
+        });
+    };
 
     return (
         <form className="grid grid-cols-1 gap-5 rounded-lg border border-slate-300 p-5">
@@ -36,6 +54,19 @@ const BookingForm = ({ currentUser }: Props) => {
                     Email
                     <input className="mt-1 border rounded w-full py-2 px-3 text-gray-700 bg-gray-200 font-normal" type="text" readOnly disabled {...register("email")} />
                 </label>
+            </div>
+            <div className="space-y-2">
+                <h2 className="text-xl font-semibold">Your Price Summary</h2>
+            </div>
+            <div className="bg-blue-200 p-4 rounded-md">
+                <div className="font-semibold text-lg">
+                    Total Cost: ${paymentIntent.totalCost.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                </div>
+                <div className="text-xs">Includes taxes and charges</div>
+            </div>
+            <div className="space-y-2">
+                <h3 className="text-xl font-semibold">Payment Information</h3>
+                <CardElement id="payment-element" className="border rounded-md p-2 text-sm" />
             </div>
         </form>
     );
